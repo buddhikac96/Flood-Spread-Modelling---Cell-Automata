@@ -9,7 +9,7 @@ ON = 255
 OFF = 0
 vals = [ON, OFF] 
 
-def randomGrid(N): 
+def randomGrid(N): #return a random grid
 
 	"""returns a grid of NxN random values"""
 	return np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N) 
@@ -79,7 +79,7 @@ def update(frameNum, img, grid, N):
 	# update data 
 	img.set_data(newGrid) 
 	grid[:] = newGrid[:] 
-	return img, 
+	return img
 
 # main() function 
 def main(): 
@@ -118,7 +118,6 @@ def main():
 	elif args.gosper: 
 		grid = np.zeros(N*N).reshape(N, N) 
 		addGosperGliderGun(10, 10, grid) 
-
 	else: # populate grid with random on/off - 
 			# more off than on 
 		grid = randomGrid(N) 
@@ -141,4 +140,4 @@ def main():
 
 # call main 
 if __name__ == '__main__': 
-	main() 
+	main()

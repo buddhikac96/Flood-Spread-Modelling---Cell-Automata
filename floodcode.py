@@ -84,33 +84,36 @@ def GetFlowWaterAmount(centerCellHeight, numberOfNeighbours):
   return centerCellHeight / (numberOfNeighbours + 1)
 
 def OverFlowWaterToNeighbour(grid, cell, waterFlowAmount):
-  #left
-  if(grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil + waterFlowAmount <= cell.water + cell.soil):
-    grid[cell.i][cell.j - 1].water += waterFlowAmount
-  else:
-    grid[cell.i][cell.j - 1].water += (cell.water + cell.soil) - (grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil)
-    grid[cell.i][cell.j].water += waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil))
+    #left
+    if(grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil + waterFlowAmount <= cell.water + cell.soil):
+        grid[cell.i][cell.j - 1].water += int(waterFlowAmount)
+    else:
+        grid[cell.i][cell.j - 1].water += (cell.water + cell.soil) - (grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil)
+        grid[cell.i][cell.j].water += int(waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i][cell.j - 1].water + grid[cell.i][cell.j - 1].soil)))
 
-  #top
-  if(grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil + waterFlowAmount <= cell.water + cell.soil):
-    grid[cell.i - 1][cell.j].water += waterFlowAmount
-  else:
-    grid[cell.i - 1][cell.j].water += (cell.water + cell.soil) - (grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil)
-    grid[cell.i][cell.j].water += waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil))
+    #top
+    if(grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil + waterFlowAmount <= cell.water + cell.soil):
+        grid[cell.i - 1][cell.j].water += int(waterFlowAmount)
+    else:
+        grid[cell.i - 1][cell.j].water += (cell.water + cell.soil) - (grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil)
+        grid[cell.i][cell.j].water += int(waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i - 1][cell.j].water + grid[cell.i - 1][cell.j].soil)))
 
-  #right
-  if(grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil + waterFlowAmount <= cell.water + cell.soil):
-    grid[cell.i][cell.j + 1].water += waterFlowAmount
-  else:
-    grid[cell.i][cell.j + 1].water += (cell.water + cell.soil) - (grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil)
-    grid[cell.i][cell.j].water += waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil))
+    #right
+    if(grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil + waterFlowAmount <= cell.water + cell.soil):
+        grid[cell.i][cell.j + 1].water += int(waterFlowAmount)
+    else:
+        grid[cell.i][cell.j + 1].water += (cell.water + cell.soil) - (grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil)
+        grid[cell.i][cell.j].water += int(waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i][cell.j + 1].water + grid[cell.i][cell.j + 1].soil)))
 
-  #bottom
-  if(grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil + waterFlowAmount <= cell.water + cell.soil):
-    grid[cell.i + 1][cell.j].water += waterFlowAmount
-  else:
-    grid[cell.i + 1][cell.j].water += (cell.water + cell.soil) - (grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil)
-    grid[cell.i][cell.j].water += waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil))
+    #bottom
+    if(grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil + waterFlowAmount <= cell.water + cell.soil):
+        grid[cell.i + 1][cell.j].water += int(waterFlowAmount)
+    else:
+        grid[cell.i + 1][cell.j].water += (cell.water + cell.soil) - (grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil)
+        grid[cell.i][cell.j].water += int(waterFlowAmount - ((cell.water + cell.soil) - (grid[cell.i + 1][cell.j].water + grid[cell.i + 1][cell.j].soil)))
+
+    
+
 
 def ReduceWaterInfiltration(grid, soilInfiltraionMap, time):
     for i in grid:
@@ -123,37 +126,55 @@ def ReduceWaterInfiltration(grid, soilInfiltraionMap, time):
             ql = ft * time
             
             if(j.water - ql >= 0):
-                j.water = j.water - ql
+                j.water = int(j.water - ql)
             else:
                 j.water = 0
 
-def Driver():
+
+def update(frameNum, img, grid, N): 
+
+    #get cells which has water
+    waterCells = GetWaterCells(grid)
+
+    #Get sorted cells acording to water level
+    sortedWaterCell = SortWaterCellArray(waterCells)[::-1]
+
+    #iterate over all water cells
     for cell in sortedWaterCell:
         averageHeight = GetAverageHeight(cell, grid)
-      
+        
         waterFlowAmount = GetFlowWaterAmount(cell.water + cell.soil, 4)
 
         OverFlowWaterToNeighbour(grid, cell, waterFlowAmount)
-        
+            
         ReduceWaterInfiltration(grid, soilInfiltraionMap, 3)
 
-#create grid
-grid = getSoilLevelPlusWaterLevel(sampleSoil, sampleWater)
+    img.set_data(newGrid) 
+	return img
 
-#get cells which has water
-waterCells = GetWaterCells(grid)
 
-#sort water cells
-sortedWaterCell = SortWaterCellArray(waterCells)[::-1]
+def main():
 
-#iterate over all water cells
-for cell in sortedWaterCell:
-  averageHeight = GetAverageHeight(cell, grid)
-  
-  waterFlowAmount = GetFlowWaterAmount(cell.water + cell.soil, 4)
+    #create grid
+    grid = getSoilLevelPlusWaterLevel(sampleSoil, sampleWater)
 
-  OverFlowWaterToNeighbour(grid, cell, waterFlowAmount)
-    
-  ReduceWaterInfiltration(grid, soilInfiltraionMap, 3)
+    N = len(grid)
+    updateInterval = 50
 
-  
+    fig, ax = plt.subplots() 
+	img = ax.imshow(grid, interpolation='nearest') 
+	ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ), 
+								frames = 10, 
+								interval=updateInterval, 
+								save_count=50) 
+
+	# # of frames? 
+	# set output file 
+	#if args.movfile: 
+		#ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264']) 
+
+	plt.show() 
+
+
+if __name__ == '__main__':
+    main() 
