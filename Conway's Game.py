@@ -129,7 +129,7 @@ def main():
 	ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ), 
 								frames = 10, 
 								interval=updateInterval, 
-								save_count=50) 
+								save_count=50)
 
 	# # of frames? 
 	# set output file 
