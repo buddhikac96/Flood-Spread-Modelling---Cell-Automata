@@ -35,7 +35,7 @@ def getGrid():
     [0,0,0,0,0,0,0,0,0,0,0,0]]
 
 def update(frameNum, img, grid, N):
-    #get value cells
+    #get water cells
     arr = []
     for i in range(N - 1):
         for j in range(N - 1):
@@ -45,9 +45,24 @@ def update(frameNum, img, grid, N):
     # Python program for implementation of Bubble Sort
     sortedarr = bubbleSort(arr)[::-1]
 
-    for i in sortedarr:
-        if grid[i[0]-1][i[1]] < i[2]:
-            grid[i[0] - 1][i[1]]
+    numOfLessWaterCells = 0
+
+    if grid[i[0] - 1][i[1]] < i[2]:
+        numOfLessWaterCells += 1
+
+    if grid[i[0]][i[1] + 1] < i[2]:
+        numOfLessWaterCells += 1
+
+    if grid[i[0] + 1][i[1]] < i[2]:
+        numOfLessWaterCells += 1
+
+    if grid[i[0]][i[1] - 1] < i[2]:
+        numOfLessWaterCells += 1
+
+    overFlowWaterAmout = int(100 / numOfLessWaterCells)
+
+    grid[i[0]][i[1]] -= 100
+
 
 
     img.set_data(grid)
