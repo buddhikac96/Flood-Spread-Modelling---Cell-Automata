@@ -71,15 +71,11 @@ def get_random_cell_grid(N):
     for i in range(N):
         row = []
         for j in range(N):
-            row.append(Cell(i, j, random.randint(1000, 2000), random.randint(1000, 2000), 'default'))
+            if(i == j):
+                row.append(Cell(i, j, 100, random.randint(8000000, 9000000), 'default'))
+            else:
+                row.append(Cell(i, j, 100, random.randint(20, 100), 'default'))
         grid.append(row)
-
-    grid2 = [[Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default')],
-    [Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default')],
-    [Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 5000, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default')],
-    [Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default')],
-    [Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default'),Cell(i, j, 10, 0, 'default')]]
-
 
     return grid
 
@@ -90,7 +86,7 @@ def get_show_grid(grid_cell):
     for i in grid_cell:
         row = []
         for j in i:
-            row.append(int(j.water_level))
+            row.append(int(j.water_level + j.soil_level))
         grid_show.append(row)
 
     return grid_show
@@ -129,7 +125,11 @@ def OverFlowWaterToNeighbour(grid, cell, waterFlowAmount):
     # left
     if (grid[cell.i][cell.j - 1].water_level + grid[cell.i][
         cell.j - 1].soil_level + waterFlowAmount <= cell.water_level + cell.soil_level):
+
         grid[cell.i][cell.j - 1].setWaterLevel(grid[cell.i][cell.j - 1].water_level + waterFlowAmount)
+
+        ###grid[cell.i][cell.j].setWaterLevel(cell.water_level - waterFlowAmount)
+
         ###print("left", grid[cell.i][cell.j - 1].water_level)
     else:
 
@@ -147,6 +147,8 @@ def OverFlowWaterToNeighbour(grid, cell, waterFlowAmount):
 
         grid[cell.i - 1][cell.j].setWaterLevel(grid[cell.i - 1][cell.j].water_level + waterFlowAmount)
 
+        ###grid[cell.i][cell.j].setWaterLevel(cell.water_level - waterFlowAmount)
+
         ###print("top", grid[cell.i - 1][cell.j].water_level)
     else:
 
@@ -161,6 +163,8 @@ def OverFlowWaterToNeighbour(grid, cell, waterFlowAmount):
         cell.j + 1].soil_level + waterFlowAmount <= cell.water_level + cell.soil_level):
 
         grid[cell.i][cell.j + 1].setWaterLevel(grid[cell.i][cell.j + 1].water_level + waterFlowAmount)
+
+        ###grid[cell.i][cell.j].setWaterLevel(cell.water_level - waterFlowAmount)
 
         ###print("right", grid[cell.i][cell.j + 1].water_level)
     else:
@@ -177,6 +181,8 @@ def OverFlowWaterToNeighbour(grid, cell, waterFlowAmount):
         cell.j].soil_level + waterFlowAmount <= cell.water_level + cell.soil_level):
 
         grid[cell.i + 1][cell.j].setWaterLevel(grid[cell.i + 1][cell.j].water_level + waterFlowAmount)
+
+        ###grid[cell.i][cell.j].setWaterLevel(cell.water_level - waterFlowAmount)
 
         ###print("bottom", grid[cell.i + 1][cell.j].water_level)
     else:
@@ -240,7 +246,7 @@ def update(frameNum, img, grid_cell, N):
     grid_show = get_show_grid(grid_cell)
 
     # debug#
-    # print(grid_show)
+    print(grid_show)
 
     img.set_data(grid_show)
     return img
@@ -258,11 +264,11 @@ def main():
     args = parser.parse_args()
 
     # set grid size
-    N = 50
+    N = 20
     if args.N and int(args.N) > 8:
         N = int(args.N)
 
-    updateInterval = 500
+    updateInterval = 1000
     if args.interval:
         updateInterval = int(args.interval)
 
@@ -276,7 +282,7 @@ def main():
     grid_show = get_show_grid(grid_cell)
 
     fig, ax = plt.subplots()
-    img = ax.imshow(grid_show, interpolation='nearest')
+    img = ax.imshow(grid_show, interpolation='bicubic')
 
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid_cell, N,),
                                   frames=100,

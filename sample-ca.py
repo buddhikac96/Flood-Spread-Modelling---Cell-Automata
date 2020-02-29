@@ -76,7 +76,7 @@ def main():
     grid_show = getGrid()
 
     fig, ax = plt.subplots()
-    img = ax.imshow(grid_show, interpolation='nearest')
+    img = ax.imshow(grid_show, interpolation='hermite')
 
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid_show, N,),
                                   frames=100,

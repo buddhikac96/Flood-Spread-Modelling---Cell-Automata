@@ -125,7 +125,7 @@ def main():
 	# set up animation 
     #-#
 	fig, ax = plt.subplots() 
-	img = ax.imshow(grid, interpolation='nearest') 
+	img = ax.imshow(grid, interpolation='hermite') 
 	ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ), 
 								frames = 10, 
 								interval=updateInterval, 
