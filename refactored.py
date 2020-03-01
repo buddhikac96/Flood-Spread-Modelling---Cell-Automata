@@ -66,12 +66,22 @@ class Cell:
         self.soil_level = int(soil_level)
 
 
+def update_river_water_level(grid):
+    N = len(grid)
+    for i in range(N):
+        for j in range(N):
+            if(i == j):
+                grid[i][j].water_level += 1000000
+
+    return grid
+
+
 def get_random_cell_grid(N):
     grid = []
     for i in range(N):
         row = []
         for j in range(N):
-            if(i == j):
+            if(abs(i - j) < 2):
                 row.append(Cell(i, j, 100, random.randint(8000000, 9000000), 'default'))
             else:
                 row.append(Cell(i, j, 100, random.randint(20, 100), 'default'))
@@ -245,8 +255,10 @@ def update(frameNum, img, grid_cell, N):
     # make grid_show and set to img
     grid_show = get_show_grid(grid_cell)
 
+    update_river_water_level(grid_cell)
+
     # debug#
-    print(grid_show)
+    #print(grid_show)
 
     img.set_data(grid_show)
     return img
